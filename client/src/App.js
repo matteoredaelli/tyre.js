@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
-import './App.css';
-import { Navbar, Jumbotron, Button } from 'react-bootstrap';
+//import './App.css';
+
+import { Grid, Navbar, Jumbotron, Button } from 'react-bootstrap';
 
 function description2array(val) {
   const reg = /^(.+) (P|LT|T)?(\d+(\.\d+)?)\/(\d+(\.\d+)?) ([VZ]?R|-)?(\d+)(C?) ((\d+)(\/(\d+))?)(\w) ?(.*)$/i
@@ -124,20 +125,29 @@ class App extends Component {
   render() {
     return (
 
+
       <div className="App">
+        <Navbar inverse fixedTop>
+          <Grid>
+            <Navbar.Header>
+              <Navbar.Brand>
+                <a href="/tyre/">Tyre Description Parser</a>
+              </Navbar.Brand>
+            </Navbar.Header>
+          </Grid>
+        </Navbar>
+        <Jumbotron>
+          <Grid>
 
+          <h1>Tyre description Parser</h1>
+              <form onSubmit={this.handleSubmit}>
+                  <input type="text" size="50" placeholder="insert a tire descrition..  " value={this.state.value} onChange={this.handleChange} />
+                <button type="submit" class="btn btn-primary">Submit</button>
+              </form>
 
-
-      <form onSubmit={this.handleSubmit}>
-        <label>
-          Name:
-          <input type="text" value={this.state.value} onChange={this.handleChange} />
-        </label>
-        <input type="submit" value="Submit" />
-      </form>
-
-      <p>Results for {this.state.tyre.description}:</p>
       <script>ga('send', 'event', 'Tyres', 'parse_description', '{this.state.tyre.description}');</script>
+      </Grid>
+    </Jumbotron>
       <ul>
       {Object.keys(this.state.tyre).map(k =>
         <li> {k}: {this.state.tyre[k]}</li>
@@ -145,7 +155,10 @@ class App extends Component {
 
       </ul>
 
-      </div>
+
+  </div>
+
+
     );
   }
 }

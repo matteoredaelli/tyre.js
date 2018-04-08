@@ -113,7 +113,8 @@ class App extends Component {
 
   handleSubmit(event) {
     //alert('A name was submitted: ' + convert(this.state.value));
-    this.setState({ tyre: description2array(this.state.value), users: this.state.users })
+    this.setState({ tyre: description2array(this.state.value), users: this.state.users });
+    ga('send', 'event', 'Tyres', 'parse_description', '{this.state.tyre.description}');
     event.preventDefault();
   }
   componentDidMount() {
@@ -146,7 +147,7 @@ class App extends Component {
                 <button type="submit" class="btn btn-primary">Submit</button>
               </form>
 
-      <script>ga('send', 'event', 'Tyres', 'parse_description', '{this.state.tyre.description}');</script>
+
       </Grid>
     </Jumbotron>
       <ul>

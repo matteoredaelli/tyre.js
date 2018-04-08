@@ -140,6 +140,7 @@ class App extends Component {
           <Grid>
 
           <h1>Tyre description Parser</h1>
+          <p>Insert a string like <i>Goodyear EfficientGrip Performance 205&#47;55 R16 91V</i></p>
               <form onSubmit={this.handleSubmit}>
                   <input type="text" size="50" placeholder="insert a tire descrition..  " value={this.state.value} onChange={this.handleChange} />
                 <button type="submit" class="btn btn-primary">Submit</button>

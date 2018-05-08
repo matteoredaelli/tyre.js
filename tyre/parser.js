@@ -1,12 +1,9 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-//import './App.css';
+"use strict";
 
-import { Grid, Navbar, Jumbotron, Button } from 'react-bootstrap';
 
-function description2array(val) {
+exports.parse_description = function(description) {
   const reg = /^(.+) (P|LT|T)?(\d+(\.\d+)?)\/(\d+(\.\d+)?) ([VZ]?R|-)?(\d+)(C?) ((\d+)(\/(\d+))?)(\w) ?(.*)$/i
-  const match = reg.exec(val);
+  const match = reg.exec(description);
   var result = {}
   if (match) {
     result.description = match[0];
@@ -28,15 +25,24 @@ function description2array(val) {
 
 function extra2array(val, result) {
   // https://www.oponeo.co.uk/tyre-article/how-to-read-tyre-markings
+  // https://www.mytyres.co.uk/tyre-glossary.html
   const regs = [
+    {reg: /\bGRNX|Eco-?impact\b/i, key:"green", action: "set", value: true},
+    {reg: /\b(xl|rf)\b/i, key:"extra_load", action: "set", index:1},
+    {reg: /\b(front|rear)\b/i, key:"front_rear", action: "push", index:1},
+    {reg: /\b(mfs|fsl|rfp|fp|fr)\b/i, key:"mfs", action: "set", index:1},
+    {reg: /\b(ece|e)\b/i, key:"markings", action: "push", index:1},
+    {reg: /\b(jbl)\b/i, key:"markings", action: "push", index:1},
+    {reg: /\b(rwl|e)\b/i, key:"markings", action: "push", index:1},
+    {reg: /\b(twi)\b/i, key:"markings", action: "push", index:1},
+    {reg: /\b(ulw)\b/i, key:"markings", action: "push", index:1},
+    {reg: /\b(rbl)\b/i, key:"markings", action: "push", index:1},
     {reg: /\b(ar)\b/i, key:"oe_marks", action: "push", index:1},
     {reg: /\b(am)\b/i, key:"oe_marks", action: "push", index:1},
     {reg: /\b(ao)\b/i, key:"oe_marks", action: "push", index:1},
     {reg: /\b(aoe)\b/i, key:"oe_marks", action: "push", index:1},
     {reg: /\b(r01)\b/i, key:"oe_marks", action: "push", index:1},
     {reg: /\b(b)\b/i, key:"oe_marks", action: "push", index:1},
-    {reg: /\b(ece|e)\b/i, key:"markings", action: "push", index:1},
-    {reg: /\b(jbl)\b/i, key:"markings", action: "push", index:1},
     {reg: /\b(k0)\b/i, key:"oe_marks", action: "push", index:1},
     {reg: /\b(k1)\b/i, key:"oe_marks", action: "push", index:1},
     {reg: /\b(k2)\b/i, key:"oe_marks", action: "push", index:1},
@@ -46,6 +52,7 @@ function extra2array(val, result) {
     {reg: /\b(jlr)\b/i, key:"oe_marks", action: "push", index:1},
     {reg: /\b(jls)\b/i, key:"oe_marks", action: "push", index:1},
     {reg: /\b(mc)\b/i, key:"oe_marks", action: "push", index:1},
+    {reg: /\b(mclaren)\b/i, key:"oe_marks", action: "push", index:1},
     {reg: /\b(mgt)\b/i, key:"oe_marks", action: "push", index:1},
     {reg: /\b(mgt j)\b/i, key:"oe_marks", action: "push", index:1},
     {reg: /\b(mo)\b/i, key:"oe_marks", action: "push", index:1},
@@ -61,23 +68,25 @@ function extra2array(val, result) {
     {reg: /\b(n6)\b/i, key:"oe_marks", action: "push", index:1},
     {reg: /\b(nr1)\b/i, key:"oe_marks", action: "push", index:1},
     {reg: /(retread|rinnovati|rinnovato)/i, key:"retread", action: "set", value:"true"},
-    {reg: /\b(rwl|e)\b/i, key:"markings", action: "push", index:1},
-    {reg: /\b(rbl)\b/i, key:"markings", action: "push", index:1},
     {reg: /\b(t0)\b/i, key:"oe_marks", action: "push", index:1},
     {reg: /\b(t1)\b/i, key:"oe_marks", action: "push", index:1},
     {reg: /\b(t2)\b/i, key:"oe_marks", action: "push", index:1},
     {reg: /\b(t3)\b/i, key:"oe_marks", action: "push", index:1},
-    {reg: /\b(tl|tt)\b/i, key:"tube", action: "push", index:1},
-    {reg: /\b(twi)\b/i, key:"markings", action: "push", index:1},
-    {reg: /\b(ulw)\b/i, key:"markings", action: "push", index:1},
     {reg: /\b(vol)\b/i, key:"oe_marks", action: "push", index:1},
     {reg: /(\*)/, key:"oe_marks", action: "push", index:1},
-    {reg: /\b(xl|rf)\b/i, key:"extra_load", action: "set", index:1},
-    {reg: /\b(mfs|fsl|rfp|fp|fr)\b/i, key:"mfs", action: "set", index:1},
     {reg: /\b(csr|dsst|emt|rsc|rof|runflat|rft|ssr|sst|zp)\b/i, key:"runflat", action: "set", index:1},
     {reg: /\b(run flat)\b/i, key:"runflat", action: "set", index:1},
-    {reg: /\b(m\\+s)\b/i, key:"season", action: "set", value: "winter"},
-    {reg: /\b(winter|summer)\b/i, key:"season", action: "set", index:1}
+    {reg: /\b(s-i|sealing|cs)\b/i, key:"seal_inside", action: "set", value: true},
+    {reg: /\b(m\\+s|snow)\b/i, key:"season", action: "set", value: "winter"},
+    {reg: /\b(winter|summer)\b/i, key:"season", action: "set", index:1},
+
+    {reg: /\bSEASON|STAGIONI|4MEVSIM|JOKASÄÄNRENGAS|Celoročné\b/i, key:"season", action: "set", value: "all_seasons"},
+    {reg: /\bm\\+s|snow|invernal|KITKARENGAS|NASTARENGAS|Zimné\b/i, key:"season", action: "set", value: "winter"},
+    {reg: /\bSUMMER|ESTIV|KESÄRENGAS|Letné\b/i, key:"season", action: "set", value: "summer"},
+
+    {reg: /\b(studded|chiodat|NASTARENGAS|SPIKE)\b/i, key:"studded", action: "set", value: true},
+    {reg: /\b(studdable|chiodabil)\b/i, key:"studdable", action: "set", value: true},
+    {reg: /\b(tl|tt)\b/i, key:"tube", action: "push", index:1},
   ];
   regs.forEach(function(element) {
     let match = element.reg.exec(val);
@@ -95,74 +104,3 @@ function extra2array(val, result) {
    });
   return result;
 }
-
-class App extends Component {
-  //state = {users: []}
-
-  constructor(props) {
-    super(props);
-    this.state = {users: [], tyre: {}};
-
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
-  }
-
-  handleChange(event) {
-    this.setState({value: event.target.value});
-  }
-
-  handleSubmit(event) {
-    //alert('A name was submitted: ' + convert(this.state.value));
-    this.setState({ tyre: description2array(this.state.value), users: this.state.users });
-    //ga('send', 'event', 'Tyres', 'parse_description', '{this.state.tyre.description}');
-    event.preventDefault();
-  }
-  componentDidMount() {
-    // fetch('/users')
-    //   .then(res => res.json())
-    //   .then(users => this.setState({ users, tyre: this.state.tyre }));
-  }
-
-  render() {
-    return (
-
-
-      <div className="App">
-        <Navbar inverse fixedTop>
-          <Grid>
-            <Navbar.Header>
-              <Navbar.Brand>
-                <a href="/tyre/">Tyre Description Parser</a>
-              </Navbar.Brand>
-            </Navbar.Header>
-          </Grid>
-        </Navbar>
-        <Jumbotron>
-          <Grid>
-
-          <h1>Tyre description Parser</h1>
-          <p>Insert a string like <i>Goodyear EfficientGrip Performance 205&#47;55 R16 91V</i></p>
-              <form onSubmit={this.handleSubmit}>
-                  <input type="text" size="50" placeholder="insert a tire descrition..  " value={this.state.value} onChange={this.handleChange} />
-                <button type="submit" class="btn btn-primary">Submit</button>
-              </form>
-
-
-      </Grid>
-    </Jumbotron>
-      <ul>
-      {Object.keys(this.state.tyre).map(k =>
-        <li> {k}: {this.state.tyre[k]}</li>
-      )}
-
-      </ul>
-
-
-  </div>
-
-
-    );
-  }
-}
-
-export default App;

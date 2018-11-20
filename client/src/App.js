@@ -6,7 +6,7 @@ import { Grid, Navbar, Jumbotron, Button } from 'react-bootstrap';
 
 function description2array(val) {
   val = val.toUpperCase()
-  const reg = /^(.+) (P|LT|T)?(\d+(\.\d+)?)\/(\d+(\.\d+)?) ([VZ]?R|-)?(\d+)(C?) ((\d+)(\/(\d+))?)(\w) ?(.*)$/i
+  const reg = /^(.+) (P|LT|T)?(\d+(\.\d+)?)\/(\d+(\.\d+)?) ([VZ]?R|-)?(\d+)(C?) ((\d+)(\/(\d+))?) ?(\w) ?(.*)$/i
   const match = reg.exec(val);
   var result = {}
   if (match) {
@@ -236,7 +236,7 @@ function extra2array(val, result) {
     {reg: /\b(csr|dsst|emt|rsc|rof|runflat|rft|ssr|sst|zp)\b/i, key:"runflat", action: "set", index:1},
     {reg: /\b(run flat)\b/i, key:"runflat", action: "set", index:1},
     {reg: /\b(m\\+s)\b/i, key:"season", action: "set", value: "winter"},
-    {reg: /\b(winter|summer)\b/i, key:"season", action: "set", index:1}
+    {reg: /\b(winter|summer|inverno|estate|all seasons)\b/i, key:"season", action: "set", index:1}
   ];
   regs.forEach(function(element) {
     let match = element.reg.exec(val);

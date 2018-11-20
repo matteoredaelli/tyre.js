@@ -5,6 +5,7 @@ import logo from './logo.svg';
 import { Grid, Navbar, Jumbotron, Button } from 'react-bootstrap';
 
 function description2array(val) {
+  val = val.toUpperCase()
   const reg = /^(.+) (P|LT|T)?(\d+(\.\d+)?)\/(\d+(\.\d+)?) ([VZ]?R|-)?(\d+)(C?) ((\d+)(\/(\d+))?)(\w) ?(.*)$/i
   const match = reg.exec(val);
   var result = {}
@@ -23,8 +24,166 @@ function description2array(val) {
   }
   const new_result = extra2array(result.extra, result);
 
+  let brand = val.containsAny(brands)
+  if (brand) {
+    result.brand = brand;
+    result.product = result.product.replace(brand, "")
+  }
   return new_result;
 }
+
+
+const brands = [
+  "ACCELERA",
+  "ACHILLES",
+  "AEOLUS",
+  "ALLIANCE",
+  "AOTELI",
+  "APLUS",
+  "APOLLO",
+  "ATLAS",
+  "AURORA",
+  "AUSTONE",
+  "AVON",
+  "BARUM",
+  "BFGOODRICH",
+  "BF-GOODRICH",
+  "BKT",
+  "BRIDGESTONE",
+  "CACHLAND",
+  "CAMAC",
+  "COMPASAL",
+  "CONTINENTAL",
+  "COOPER",
+  "CORDIANT",
+  "CST",
+  "CULTOR",
+  "DAYTON",
+  "DEBICA",
+  "DELI",
+  "DELINTE",
+  "DUNLOP",
+  "DURATURN",
+  "DURO",
+  "FALKEN",
+  "FEDERAL",
+  "FIREMAX",
+  "FIRESTONE",
+  "FORMULA",
+  "FORTUNA",
+  "FORTUNE",
+  "FULDA",
+  "GENERAL",
+  "GISLAVED",
+  "GOODRIDE",
+  "GOODYEAR",
+  "GRIPMAX",
+  "GT",
+  "GT-RADIAL",
+  "HAIDA",
+  "HANKOOK",
+  "HEADWAY",
+  "HEIDENAU",
+  "HI-FLY",
+  "IMPERIAL",
+  "INFINITY",
+  "INSA-TURBO",
+  "INTERSTATE",
+  "JINYU",
+  "JOYROAD",
+  "KAMA",
+  "KELLY",
+  "KENDA",
+  "KETER",
+  "KINFOREST",
+  "KING-MEILER",
+  "KINGSTAR",
+  "KLEBER",
+  "KORMORAN",
+  "KUMHO",
+  "LANDSAIL",
+  "LANVIGATOR",
+  "LAUFENN",
+  "LEXANI",
+  "LINGLONG",
+  "MARSHAL",
+  "MASTERSTEEL",
+  "MATADOR",
+  "MAXTREK",
+  "MAXXIS",
+  "MENTOR",
+  "METEOR",
+  "METZELER",
+  "MICHELIN",
+  "MICHELIN-COLLECTION",
+  "MILESTONE",
+  "MINERVA",
+  "MITAS",
+  "NANKANG",
+  "NEXEN",
+  "NO-BRAND-IMAGE",
+  "NOKIAN",
+  "NORAUTO",
+  "OTANI",
+  "OVATION",
+  "PACE",
+  "PETLAS",
+  "PIRELLI",
+  "PNEUMANT",
+  "POWERTRAC",
+  "RADAR",
+  "RETRO",
+  "RIKEN",
+  "ROTALLA",
+  "ROTEX",
+  "ROYAL",
+  "ROYAL BLACK",
+  "RUNWAY",
+  "SAILUN",
+  "SATOYA",
+  "SAVA",
+  "SEIBERLING",
+  "SEMPERIT",
+  "SONAR",
+  "STARMAXX",
+  "STAR-PERFORMER",
+  "STRIAL",
+  "SUNNY",
+  "SYRON",
+  "TAURUS",
+  "T BY ZENISES",
+  "THREE A",
+  "TIGAR",
+  "TOLEDO",
+  "TOMKET",
+  "TORQUE",
+  "TOYO",
+  "TRACMAX",
+  "TRIANGLE",
+  "TRISTAR",
+  "UNIROYAL",
+  "VIKING",
+  "VITOUR",
+  "VOLTYRE",
+  "VREDESTEIN",
+  "WANLI",
+  "WINRUN",
+  "WINTER-TACT",
+  "YOKOHAMA",
+  "ZETA"
+  ]
+
+const product = [
+
+]
+String.prototype.containsAny = String.prototype.containsAny || function(arr) {
+  for (var i = 0; i < arr.length; i++) {
+    if (this.includes(arr[i])) {
+      return arr[i];
+    }
+  }
+  return null;
+};
 
 function extra2array(val, result) {
   // https://www.oponeo.co.uk/tyre-article/how-to-read-tyre-markings
